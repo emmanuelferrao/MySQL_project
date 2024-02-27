@@ -1,0 +1,485 @@
+# MySQL_project
+
+-- MySQL Workbench Forward Engineering
+ 
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+ 
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- Schema culinary_control
+-- -----------------------------------------------------
+ 
+-- -----------------------------------------------------
+-- Schema culinary_control
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `culinary_control` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
+USE `culinary_control` ;
+ 
+-- -----------------------------------------------------
+-- Table `culinary_control`.`cardapios`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `culinary_control`.`cardapios` (
+  `id_cardapio` INT NOT NULL AUTO_INCREMENT,
+  `nome` VARCHAR(45) NOT NULL,
+  `descricao` TEXT NOT NULL,
+  PRIMARY KEY (`id_cardapio`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 6
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+ 
+ 
+-- -----------------------------------------------------
+-- Table `culinary_control`.`categorias`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `culinary_control`.`categorias` (
+  `id_categoria` INT NOT NULL AUTO_INCREMENT,
+  `nome` VARCHAR(30) NOT NULL,
+  `descricao` TEXT NOT NULL,
+  PRIMARY KEY (`id_categoria`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 20
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+ 
+ 
+-- -----------------------------------------------------
+-- Table `culinary_control`.`receitas`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `culinary_control`.`receitas` (
+  `id_receita` INT NOT NULL AUTO_INCREMENT,
+  `nome` VARCHAR(45) NOT NULL,
+  `descricao` TEXT NOT NULL,
+  `unidade_medida` ENUM('porção', 'prato', 'fatia', 'unidade', 'copo', 'taça') NOT NULL,
+  `data_criacao` DATETIME NOT NULL,
+  `valor_venda` DECIMAL(10,2) NOT NULL,
+  `id_categoria` INT NOT NULL,
+  PRIMARY KEY (`id_receita`),
+  INDEX `id_categoria` (`id_categoria` ASC) VISIBLE,
+  CONSTRAINT `receitas_ibfk_1`
+    FOREIGN KEY (`id_categoria`)
+    REFERENCES `culinary_control`.`categorias` (`id_categoria`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 21
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+ 
+ 
+-- -----------------------------------------------------
+-- Table `culinary_control`.`cardapios_receitas`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `culinary_control`.`cardapios_receitas` (
+  `id_cardapio` INT NOT NULL,
+  `id_receita` INT NOT NULL,
+  PRIMARY KEY (`id_cardapio`, `id_receita`),
+  INDEX `id_receita` (`id_receita` ASC) VISIBLE,
+  CONSTRAINT `cardapios_receitas_ibfk_1`
+    FOREIGN KEY (`id_cardapio`)
+    REFERENCES `culinary_control`.`cardapios` (`id_cardapio`),
+  CONSTRAINT `cardapios_receitas_ibfk_2`
+    FOREIGN KEY (`id_receita`)
+    REFERENCES `culinary_control`.`receitas` (`id_receita`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+ 
+ 
+-- -----------------------------------------------------
+-- Table `culinary_control`.`telefones`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `culinary_control`.`telefones` (
+  `id_telefone` INT NOT NULL AUTO_INCREMENT,
+  `telefone` VARCHAR(20) NOT NULL,
+  PRIMARY KEY (`id_telefone`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 31
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+ 
+ 
+-- -----------------------------------------------------
+-- Table `culinary_control`.`clientes`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `culinary_control`.`clientes` (
+  `id_cliente` INT NOT NULL AUTO_INCREMENT,
+  `nome` VARCHAR(45) NOT NULL,
+  `CPF` VARCHAR(11) NOT NULL,
+  `data_nascimento` DATE NOT NULL,
+  `id_telefone` INT NOT NULL,
+  PRIMARY KEY (`id_cliente`),
+  INDEX `id_telefone` (`id_telefone` ASC) VISIBLE,
+  CONSTRAINT `clientes_ibfk_1`
+    FOREIGN KEY (`id_telefone`)
+    REFERENCES `culinary_control`.`telefones` (`id_telefone`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 30
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+ 
+ 
+-- -----------------------------------------------------
+-- Table `culinary_control`.`mesas`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `culinary_control`.`mesas` (
+  `id_mesa` INT NOT NULL AUTO_INCREMENT,
+  `quantidade_lugares` INT NOT NULL,
+  `ocupada` TINYINT(1) NOT NULL,
+  PRIMARY KEY (`id_mesa`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 22
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+ 
+ 
+-- -----------------------------------------------------
+-- Table `culinary_control`.`formas_pagamento`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `culinary_control`.`formas_pagamento` (
+  `id_formapagamento` INT NOT NULL AUTO_INCREMENT,
+  `nome` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id_formapagamento`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 6
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+ 
+ 
+-- -----------------------------------------------------
+-- Table `culinary_control`.`funcoes`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `culinary_control`.`funcoes` (
+  `id_funcao` INT NOT NULL AUTO_INCREMENT,
+  `nome` VARCHAR(45) NOT NULL,
+  `descricao` TEXT NOT NULL,
+  PRIMARY KEY (`id_funcao`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 21
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+ 
+ 
+-- -----------------------------------------------------
+-- Table `culinary_control`.`funcionarios`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `culinary_control`.`funcionarios` (
+  `id_funcionario` INT NOT NULL AUTO_INCREMENT,
+  `nome` VARCHAR(45) NOT NULL,
+  `CPF` VARCHAR(11) NOT NULL,
+  `data_nascimento` DATE NOT NULL,
+  `email` VARCHAR(100) NOT NULL,
+  `senha_hash` VARCHAR(255) NOT NULL,
+  `salt` VARCHAR(45) NOT NULL,
+  `id_funcao` INT NOT NULL,
+  PRIMARY KEY (`id_funcionario`),
+  INDEX `id_funcao` (`id_funcao` ASC) VISIBLE,
+  CONSTRAINT `funcionarios_ibfk_1`
+    FOREIGN KEY (`id_funcao`)
+    REFERENCES `culinary_control`.`funcoes` (`id_funcao`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 21
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+ 
+ 
+-- -----------------------------------------------------
+-- Table `culinary_control`.`comandas`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `culinary_control`.`comandas` (
+  `id_comanda` INT NOT NULL AUTO_INCREMENT,
+  `abertura` DATETIME NOT NULL,
+  `fechamento` DATETIME NULL DEFAULT NULL,
+  `id_mesa` INT NOT NULL,
+  `id_formapagamento` INT NULL DEFAULT NULL,
+  `id_funcionario` INT NOT NULL,
+  `id_cliente` INT NOT NULL,
+  PRIMARY KEY (`id_comanda`),
+  INDEX `id_mesa` (`id_mesa` ASC) VISIBLE,
+  INDEX `id_formapagamento` (`id_formapagamento` ASC) VISIBLE,
+  INDEX `id_funcionario` (`id_funcionario` ASC) VISIBLE,
+  INDEX `id_cliente` (`id_cliente` ASC) VISIBLE,
+  CONSTRAINT `comandas_ibfk_1`
+    FOREIGN KEY (`id_mesa`)
+    REFERENCES `culinary_control`.`mesas` (`id_mesa`),
+  CONSTRAINT `comandas_ibfk_2`
+    FOREIGN KEY (`id_formapagamento`)
+    REFERENCES `culinary_control`.`formas_pagamento` (`id_formapagamento`),
+  CONSTRAINT `comandas_ibfk_3`
+    FOREIGN KEY (`id_funcionario`)
+    REFERENCES `culinary_control`.`funcionarios` (`id_funcionario`),
+  CONSTRAINT `comandas_ibfk_4`
+    FOREIGN KEY (`id_cliente`)
+    REFERENCES `culinary_control`.`clientes` (`id_cliente`),
+  CONSTRAINT `comandas_ibfk_5`
+    FOREIGN KEY (`id_cliente`)
+    REFERENCES `culinary_control`.`clientes` (`id_cliente`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 16
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+ 
+ 
+-- -----------------------------------------------------
+-- Table `culinary_control`.`dias_cardapios`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `culinary_control`.`dias_cardapios` (
+  `dia` VARCHAR(10) NOT NULL,
+  `id_cardapio` INT NOT NULL,
+  PRIMARY KEY (`dia`, `id_cardapio`),
+  INDEX `id_cardapio` (`id_cardapio` ASC) VISIBLE,
+  CONSTRAINT `dias_cardapios_ibfk_1`
+    FOREIGN KEY (`id_cardapio`)
+    REFERENCES `culinary_control`.`cardapios` (`id_cardapio`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+ 
+ 
+-- -----------------------------------------------------
+-- Table `culinary_control`.`fornecedores`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `culinary_control`.`fornecedores` (
+  `id_fornecedor` INT NOT NULL AUTO_INCREMENT,
+  `nome` VARCHAR(45) NOT NULL,
+  `descricao` TEXT NOT NULL,
+  `CNPJ` VARCHAR(14) NOT NULL,
+  PRIMARY KEY (`id_fornecedor`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 11
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+ 
+ 
+-- -----------------------------------------------------
+-- Table `culinary_control`.`fornecedores_telefone`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `culinary_control`.`fornecedores_telefone` (
+  `id_fornecedor` INT NOT NULL,
+  `id_telefone` INT NOT NULL,
+  PRIMARY KEY (`id_fornecedor`, `id_telefone`),
+  INDEX `id_telefone` (`id_telefone` ASC) VISIBLE,
+  CONSTRAINT `fornecedores_telefone_ibfk_1`
+    FOREIGN KEY (`id_fornecedor`)
+    REFERENCES `culinary_control`.`fornecedores` (`id_fornecedor`),
+  CONSTRAINT `fornecedores_telefone_ibfk_2`
+    FOREIGN KEY (`id_telefone`)
+    REFERENCES `culinary_control`.`telefones` (`id_telefone`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+ 
+ 
+-- -----------------------------------------------------
+-- Table `culinary_control`.`funcionarios_telefone`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `culinary_control`.`funcionarios_telefone` (
+  `id_funcionario` INT NOT NULL,
+  `id_telefone` INT NOT NULL,
+  PRIMARY KEY (`id_funcionario`, `id_telefone`),
+  INDEX `id_telefone` (`id_telefone` ASC) VISIBLE,
+  CONSTRAINT `funcionarios_telefone_ibfk_1`
+    FOREIGN KEY (`id_funcionario`)
+    REFERENCES `culinary_control`.`funcionarios` (`id_funcionario`),
+  CONSTRAINT `funcionarios_telefone_ibfk_2`
+    FOREIGN KEY (`id_telefone`)
+    REFERENCES `culinary_control`.`telefones` (`id_telefone`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+ 
+ 
+-- -----------------------------------------------------
+-- Table `culinary_control`.`itens`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `culinary_control`.`itens` (
+  `id_item` INT NOT NULL AUTO_INCREMENT,
+  `nome` VARCHAR(30) NOT NULL,
+  `descricao` TEXT NULL DEFAULT NULL,
+  `unidade_medida` ENUM('ml', 'l', 'g', 'kg', 'unidade', 'fardo', 'lata', 'garrafa') NOT NULL,
+  `valor_venda` DECIMAL(10,2) NOT NULL,
+  `valro_medio_compra` DECIMAL(10,2) NULL DEFAULT NULL,
+  `id_categoria` INT NOT NULL,
+  PRIMARY KEY (`id_item`),
+  INDEX `id_categoria` (`id_categoria` ASC) VISIBLE,
+  CONSTRAINT `itens_ibfk_1`
+    FOREIGN KEY (`id_categoria`)
+    REFERENCES `culinary_control`.`categorias` (`id_categoria`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 21
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+ 
+ 
+-- -----------------------------------------------------
+-- Table `culinary_control`.`status`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `culinary_control`.`status` (
+  `id_status` INT NOT NULL AUTO_INCREMENT,
+  `nome` VARCHAR(45) NOT NULL,
+  `descricao` TEXT NOT NULL,
+  PRIMARY KEY (`id_status`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 6
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+ 
+ 
+-- -----------------------------------------------------
+-- Table `culinary_control`.`itens_comanda`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `culinary_control`.`itens_comanda` (
+  `id_item_comanda` INT NOT NULL AUTO_INCREMENT,
+  `obsevacao` TEXT NULL DEFAULT NULL,
+  `quantidade` INT NOT NULL,
+  `id_status` INT NOT NULL,
+  `id_comanda` INT NOT NULL,
+  `id_item` INT NULL DEFAULT NULL,
+  `id_receita` INT NULL DEFAULT NULL,
+  PRIMARY KEY (`id_item_comanda`),
+  INDEX `id_status` (`id_status` ASC) VISIBLE,
+  INDEX `id_comanda` (`id_comanda` ASC) VISIBLE,
+  INDEX `id_item` (`id_item` ASC) VISIBLE,
+  INDEX `id_receita` (`id_receita` ASC) VISIBLE,
+  CONSTRAINT `itens_comanda_ibfk_1`
+    FOREIGN KEY (`id_status`)
+    REFERENCES `culinary_control`.`status` (`id_status`),
+  CONSTRAINT `itens_comanda_ibfk_2`
+    FOREIGN KEY (`id_comanda`)
+    REFERENCES `culinary_control`.`comandas` (`id_comanda`),
+  CONSTRAINT `itens_comanda_ibfk_3`
+    FOREIGN KEY (`id_item`)
+    REFERENCES `culinary_control`.`itens` (`id_item`),
+  CONSTRAINT `itens_comanda_ibfk_4`
+    FOREIGN KEY (`id_receita`)
+    REFERENCES `culinary_control`.`receitas` (`id_receita`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 101
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+ 
+ 
+-- -----------------------------------------------------
+-- Table `culinary_control`.`itens_estoque`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `culinary_control`.`itens_estoque` (
+  `id_itens_estoque` INT NOT NULL AUTO_INCREMENT,
+  `quantidade_inicial` INT NOT NULL,
+  `quantidade_atual` INT NOT NULL,
+  `data_compra` DATE NOT NULL,
+  `data_validade` DATE NOT NULL,
+  `valor_unitario` DECIMAL(10,2) NOT NULL,
+  `id_item` INT NOT NULL,
+  `id_fornecedor` INT NOT NULL,
+  PRIMARY KEY (`id_itens_estoque`),
+  INDEX `id_item` (`id_item` ASC) VISIBLE,
+  INDEX `id_fornecedor` (`id_fornecedor` ASC) VISIBLE,
+  CONSTRAINT `itens_estoque_ibfk_1`
+    FOREIGN KEY (`id_item`)
+    REFERENCES `culinary_control`.`itens` (`id_item`),
+  CONSTRAINT `itens_estoque_ibfk_2`
+    FOREIGN KEY (`id_fornecedor`)
+    REFERENCES `culinary_control`.`fornecedores` (`id_fornecedor`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 51
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+ 
+ 
+-- -----------------------------------------------------
+-- Table `culinary_control`.`itens_fornecedores`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `culinary_control`.`itens_fornecedores` (
+  `id_item` INT NOT NULL,
+  `id_fornecedor` INT NOT NULL,
+  PRIMARY KEY (`id_item`, `id_fornecedor`),
+  INDEX `id_fornecedor` (`id_fornecedor` ASC) VISIBLE,
+  CONSTRAINT `itens_fornecedores_ibfk_1`
+    FOREIGN KEY (`id_item`)
+    REFERENCES `culinary_control`.`itens` (`id_item`),
+  CONSTRAINT `itens_fornecedores_ibfk_2`
+    FOREIGN KEY (`id_fornecedor`)
+    REFERENCES `culinary_control`.`fornecedores` (`id_fornecedor`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+ 
+ 
+-- -----------------------------------------------------
+-- Table `culinary_control`.`permissoes`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `culinary_control`.`permissoes` (
+  `id_permissao` INT NOT NULL AUTO_INCREMENT,
+  `nome` VARCHAR(45) NOT NULL,
+  `descricao` TEXT NOT NULL,
+  PRIMARY KEY (`id_permissao`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 6
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+ 
+ 
+-- -----------------------------------------------------
+-- Table `culinary_control`.`permissoes_funcionarios`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `culinary_control`.`permissoes_funcionarios` (
+  `id_permissao` INT NOT NULL,
+  `id_funcionario` INT NOT NULL,
+  PRIMARY KEY (`id_permissao`, `id_funcionario`),
+  INDEX `id_funcionario` (`id_funcionario` ASC) VISIBLE,
+  CONSTRAINT `permissoes_funcionarios_ibfk_1`
+    FOREIGN KEY (`id_permissao`)
+    REFERENCES `culinary_control`.`permissoes` (`id_permissao`),
+  CONSTRAINT `permissoes_funcionarios_ibfk_2`
+    FOREIGN KEY (`id_funcionario`)
+    REFERENCES `culinary_control`.`funcionarios` (`id_funcionario`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+ 
+ 
+-- -----------------------------------------------------
+-- Table `culinary_control`.`receitas_ingredientes`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `culinary_control`.`receitas_ingredientes` (
+  `id_receita` INT NOT NULL,
+  `id_item` INT NOT NULL,
+  `quantidade` DECIMAL(10,2) NULL DEFAULT NULL,
+  PRIMARY KEY (`id_receita`, `id_item`),
+  INDEX `id_item` (`id_item` ASC) VISIBLE,
+  CONSTRAINT `receitas_ingredientes_ibfk_1`
+    FOREIGN KEY (`id_receita`)
+    REFERENCES `culinary_control`.`receitas` (`id_receita`),
+  CONSTRAINT `receitas_ingredientes_ibfk_2`
+    FOREIGN KEY (`id_item`)
+    REFERENCES `culinary_control`.`itens` (`id_item`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+ 
+ 
+-- -----------------------------------------------------
+-- Table `culinary_control`.`reservas`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `culinary_control`.`reservas` (
+  `id_mesa` INT NOT NULL,
+  `id_cliente` INT NOT NULL,
+  `data_hora_reserva` DATETIME NOT NULL,
+  PRIMARY KEY (`id_mesa`, `id_cliente`),
+  INDEX `id_cliente` (`id_cliente` ASC) VISIBLE,
+  CONSTRAINT `reservas_ibfk_1`
+    FOREIGN KEY (`id_mesa`)
+    REFERENCES `culinary_control`.`mesas` (`id_mesa`),
+  CONSTRAINT `reservas_ibfk_2`
+    FOREIGN KEY (`id_cliente`)
+    REFERENCES `culinary_control`.`clientes` (`id_cliente`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+ 
+ 
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
